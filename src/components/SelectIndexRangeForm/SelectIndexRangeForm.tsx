@@ -2,7 +2,7 @@ import React from 'react';
 import { SubmitButton } from '../../common/components/SubmitButton/SubmitButton';
 
 export interface SelectIndexRangeFormProps {
-    onFormSubmit: () => void;
+    onFormSubmit: (fromN: number, to: number) => void;
     loading: boolean;
 }
 
@@ -12,20 +12,27 @@ export const SelectIndexRangeForm: React.FunctionComponent<SelectIndexRangeFormP
 }: SelectIndexRangeFormProps) => {
     const handleSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        onFormSubmit();
+        const target = e.target as typeof e.target & {
+            fromRange: { value: string };
+            toRange: { value: string };
+        };
+        onFormSubmit(
+            Number(target.fromRange.value),
+            Number(target.toRange.value)
+        );
     };
 
     return (
         <form onSubmit={(e) => handleSubmit(e)}>
             <div className="form-group">
                 <label htmlFor="fromInput">From:</label>
-                <input type="number" className="form-control" id="form" />
+                <input type="number" className="form-control" id="fromRange" />
             </div>
             <div className="form-group">
                 <label htmlFor="toInput">To:</label>
-                <input type="number" className="form-control" id="to" />
+                <input type="number" className="form-control" id="toRange" />
             </div>
-            <SubmitButton loading={loading}/>
+            <SubmitButton loading={loading} />
         </form>
     );
 };
