@@ -26,11 +26,11 @@ export const SelectIndexRangeForm: React.FunctionComponent<SelectIndexRangeFormP
         <form onSubmit={(e) => handleSubmit(e)}>
             <div className="form-group">
                 <label htmlFor="fromInput">From:</label>
-                <input type="number" className="form-control" id="fromRange" />
+                <input type="number" min="1" max="1000" defaultValue="1" className="form-control" id="fromRange" />
             </div>
             <div className="form-group">
                 <label htmlFor="toInput">To:</label>
-                <input type="number" className="form-control" id="toRange" />
+                <input type="number" className="form-control" min="1" max="1000" defaultValue="20" id="toRange" />
             </div>
             <SubmitButton loading={loading} />
         </form>
