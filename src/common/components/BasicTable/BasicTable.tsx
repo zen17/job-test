@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DataTabularFormRow } from '../../../components/DataTabularFromRow/DataTabularFormRow';
+import { DataTabularFormRow } from '../../../components/DataTabularFormRow/DataTabularFormRow';
 
 export interface BasicTableProps {
     data: any[];
