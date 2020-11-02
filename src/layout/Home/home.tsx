@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import SelectIndexRangeForm from '../../components/SelectIndexRangeForm/SelectIndexRangeForm';
-import {
-    dataResponseDto,
-    dataResponseRecord,
-    getData
-} from '../../api/dataService';
+import { getData } from '../../api/dataService';
+
+import { DataRecord, DataRecordDTO, parseDataRecordDTO } from '../../common/domain/data-record';
+import { DataResponseDto } from '../../common/dtos/data-dto';
 import { NetworkError } from '../../error-handling/networkError';
 import { handleNetworkError } from '../../error-handling/handle-network-error';
 import { ErrorMessage } from '../../common/components/ErrorMessage/ErrorMessage';
-import { BasicTable } from '../../common/components/BasicTable/BasicTable';
+import { DataTabularForm } from '../../components/DataTabularForm/DataTabularForm';
 
 export const Home: React.FunctionComponent = () => {
     const [loadingFlg, setLoadingFlg] = useState(false);
     const [errorFlg, setErrorFLg] = useState(false);
-    const [data, setData] = useState<dataResponseRecord[]>([]);
+    const [data, setData] = useState<DataRecord[]>([]);
     const columnHeaders = ['#', 'Index', 'City', 'Slot', 'Velocity'];
-    const recordProperties = ['index', 'city', 'slot', 'velocity'];
 
     function submitForm(fromRange: number, toRange: number) {
         if (!loadingFlg) {
@@ -31,10 +29,9 @@ export const Home: React.FunctionComponent = () => {
                     setErrorFLg(false);
                     return response.json();
                 })
-                .then((data: dataResponseDto) => {
-                    normalizeData(data.data);
-                    setData(data.data);
-                    if (data.token) localStorage.setItem('token', data.token);
+                .then((dataResponseDto: DataResponseDto) => {
+                    setData(dataResponseDto.data.map((dataRecordDTO: DataRecordDTO) => parseDataRecordDTO(dataRecordDTO)));
+                    if (dataResponseDto.token) localStorage.setItem('token', dataResponseDto.token);
                 })
                 .catch((err) => {
                     setLoadingFlg(false);
@@ -46,26 +43,9 @@ export const Home: React.FunctionComponent = () => {
         }
     }
 
+
     function getTokenFromLocalStorage(): string | null {
         return localStorage.getItem('token');
-    }
-
-    function normalizeData(data: dataResponseRecord[]) {
-        data.forEach((record: dataResponseRecord) => {
-            if (!record.slot) {
-                record.slot = 0;
-            }
-            if (!record.city) {
-                record.city = 'None';
-            }
-            if (!record.index) {
-                record.index = 0;
-            }
-            if (!record.velocity) {
-                record.velocity = 0;
-                parseFloat(record.velocity+'').toFixed(2);
-            }
-        });
     }
 
     const errorMessage = errorFlg ? (
@@ -84,11 +64,7 @@ export const Home: React.FunctionComponent = () => {
                 {errorMessage}
             </div>
             <div className="mt-2">
-                <BasicTable
-                    data={data}
-                    columnHeaders={columnHeaders}
-                    recordProperties={recordProperties}
-                />
+                <DataTabularForm data={data} columnHeaders={columnHeaders} />
             </div>
         </>
     );

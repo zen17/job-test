@@ -13,7 +13,9 @@ export const DataTabularFormRow: React.FunctionComponent<DataTabularFormRowProps
     slot = 0,
     velocity = 0
 }: DataTabularFormRowProps) => {
-    const [indexInput, setIndexInput] = useState<number>(index);
+
+
+  const [indexInput, setIndexInput] = useState<number>(index);
     const [cityInput, setCityInput] = useState<string>(city);
     const [slotInput, setSlotInput] = useState<number>(slot);
     const [velocityInput, setVelocityInput] = useState<number | string>(velocity);
