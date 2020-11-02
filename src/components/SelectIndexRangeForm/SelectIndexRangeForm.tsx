@@ -10,6 +10,7 @@ export const SelectIndexRangeForm: React.FunctionComponent<SelectIndexRangeFormP
     onFormSubmit,
     loading
 }: SelectIndexRangeFormProps) => {
+
     const handleSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
         const target = e.target as typeof e.target & {

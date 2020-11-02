@@ -11,40 +11,61 @@ import { ErrorMessage } from '../../common/components/ErrorMessage/ErrorMessage'
 import { BasicTable } from '../../common/components/BasicTable/BasicTable';
 
 export const Home: React.FunctionComponent = () => {
-    const [loading, setLoading] = useState(false);
+    const [loadingFlg, setLoadingFlg] = useState(false);
     const [errorFlg, setErrorFLg] = useState(false);
     const [data, setData] = useState<dataResponseRecord[]>([]);
     const columnHeaders = ['#', 'Index', 'City', 'Slot', 'Velocity'];
     const recordProperties = ['index', 'city', 'slot', 'velocity'];
 
     function submitForm(fromRange: number, toRange: number) {
-        setLoading(true);
-        getData(fromRange, toRange, getTokenFromLocalStorage())
-            .then((response) => {
-                console.log('RESPONISE:', response);
-                if (!response.ok)
-                    throw new NetworkError(response.status, 'Network Error');
-                setLoading(false);
-                setErrorFLg(false);
-                return response.json();
-            })
-            .then((data: dataResponseDto) => {
-                setData(data.data);
-                if (data.token) localStorage.setItem('token', data.token);
-                console.log(data);
-            })
-            .catch((err) => {
-                setLoading(false);
-                setErrorFLg(true);
-                console.log('GRESKAAAAAAA:' + err);
-                if (err instanceof NetworkError) {
-                    handleNetworkError(err);
-                }
-            });
+        if (!loadingFlg) {
+            setLoadingFlg(true);
+            getData(fromRange, toRange, getTokenFromLocalStorage())
+                .then((response) => {
+                    if (!response.ok)
+                        throw new NetworkError(
+                            response.status,
+                            'Network Error'
+                        );
+                    setLoadingFlg(false);
+                    setErrorFLg(false);
+                    return response.json();
+                })
+                .then((data: dataResponseDto) => {
+                    normalizeData(data.data);
+                    setData(data.data);
+                    if (data.token) localStorage.setItem('token', data.token);
+                })
+                .catch((err) => {
+                    setLoadingFlg(false);
+                    setErrorFLg(true);
+                    if (err instanceof NetworkError) {
+                        handleNetworkError(err);
+                    }
+                });
+        }
     }
 
     function getTokenFromLocalStorage(): string | null {
         return localStorage.getItem('token');
+    }
+
+    function normalizeData(data: dataResponseRecord[]) {
+        data.forEach((record: dataResponseRecord) => {
+            if (!record.slot) {
+                record.slot = 0;
+            }
+            if (!record.city) {
+                record.city = 'None';
+            }
+            if (!record.index) {
+                record.index = 0;
+            }
+            if (!record.velocity) {
+                record.velocity = 0;
+                parseFloat(record.velocity+'').toFixed(2);
+            }
+        });
     }
 
     const errorMessage = errorFlg ? (
@@ -56,7 +77,7 @@ export const Home: React.FunctionComponent = () => {
             <div className="mt-2">
                 <SelectIndexRangeForm
                     onFormSubmit={submitForm}
-                    loading={loading}
+                    loading={loadingFlg}
                 />
             </div>
             <div className="row mt-2 justify-content-center">

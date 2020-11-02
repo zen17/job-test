@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { DataTabularFormRow } from '../../../components/DataTabularFromRow/DataTabularFormRow';
 
 export interface BasicTableProps {
     data: any[];
@@ -11,6 +12,7 @@ export const BasicTable: React.FunctionComponent<BasicTableProps> = ({
     columnHeaders,
     recordProperties
 }: BasicTableProps) => {
+    const [record, setRecord] = useState<string>('');
 
     const headers = columnHeaders.map((header: string, index: number) => (
         <th key={index} scope="col">
@@ -20,13 +22,19 @@ export const BasicTable: React.FunctionComponent<BasicTableProps> = ({
 
     const fillTd = (recordProperties: string[], dataRecord: any) =>
         recordProperties.map((property, index: number) => (
-            <td key={index}>{dataRecord[property]}</td>
+            <td key={index}>
+                <input
+                    type="text"
+                    onChange={(event) => setRecord(event.target.value)}
+                    value={dataRecord[property]}
+                />
+            </td>
         ));
 
     const body = data.map((record, index: number) => (
         <tr key={index}>
             <th scope="row">{index}</th>
-            {fillTd(recordProperties, record)}
+          <DataTabularFormRow index={record['index']} slot={record['slot']} city={record['city']} velocity={record['velocity']}/>
         </tr>
     ));
 
