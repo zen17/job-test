@@ -1,9 +1,4 @@
-export interface DataRecordDTO {
-  index: number;
-  slot: number | null;
-  city: string | null;
-  velocity: number | null;
-}
+import {DataRecordDTO} from '../dtos/data-dto';
 
 export interface DataRecord {
     index: number;

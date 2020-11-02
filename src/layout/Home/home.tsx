@@ -4,9 +4,9 @@ import { getData } from '../../api/dataService';
 
 import {
     DataRecord,
-    DataRecordDTO,
     parseDataRecordDTO
 } from '../../common/domain/data-record';
+import {DataRecordDTO} from '../../common/dtos/data-dto';
 import { DataResponseDto } from '../../common/dtos/data-dto';
 import { NetworkError } from '../../error-handling/networkError';
 import { handleNetworkError } from '../../error-handling/handle-network-error';
