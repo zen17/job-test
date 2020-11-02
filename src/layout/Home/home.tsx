@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import SelectIndexRangeForm from '../../components/SelectIndexRangeForm/SelectIndexRangeForm';
 import { getData } from '../../api/dataService';
 
-import { DataRecord, DataRecordDTO, parseDataRecordDTO } from '../../common/domain/data-record';
+import {
+    DataRecord,
+    DataRecordDTO,
+    parseDataRecordDTO
+} from '../../common/domain/data-record';
 import { DataResponseDto } from '../../common/dtos/data-dto';
 import { NetworkError } from '../../error-handling/networkError';
 import { handleNetworkError } from '../../error-handling/handle-network-error';
@@ -30,8 +34,18 @@ export const Home: React.FunctionComponent = () => {
                     return response.json();
                 })
                 .then((dataResponseDto: DataResponseDto) => {
-                    setData(dataResponseDto.data.map((dataRecordDTO: DataRecordDTO) => parseDataRecordDTO(dataRecordDTO)));
-                    if (dataResponseDto.token) localStorage.setItem('token', dataResponseDto.token);
+                    setData(
+                        normaliseData(
+                            fromRange,
+                            toRange,
+                            dataResponseDto.data.map(
+                                (dataRecordDTO: DataRecordDTO) =>
+                                    parseDataRecordDTO(dataRecordDTO)
+                            )
+                        )
+                    );
+                    if (dataResponseDto.token)
+                        localStorage.setItem('token', dataResponseDto.token);
                 })
                 .catch((err) => {
                     setLoadingFlg(false);
@@ -43,6 +57,28 @@ export const Home: React.FunctionComponent = () => {
         }
     }
 
+    function normaliseData(
+        fromRange: number,
+        toRange: number,
+        data: DataRecord[]
+    ): DataRecord[] {
+        const normalizedData: DataRecord[] = [];
+        for (let i = fromRange; i <= toRange; i++) {
+          const record = data.find((record) => record.index === i);
+            if (record) {
+                normalizedData[i]= record;
+            } else {
+                normalizedData[i] = {
+                    index: i,
+                    velocity: 0,
+                    slot: 0,
+                    city: 'None'
+                };
+            }
+        }
+      console.log('EEE', normalizedData);
+        return normalizedData;
+    }
 
     function getTokenFromLocalStorage(): string | null {
         return localStorage.getItem('token');

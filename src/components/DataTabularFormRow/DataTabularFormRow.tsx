@@ -13,12 +13,12 @@ export const DataTabularFormRow: React.FunctionComponent<DataTabularFormRowProps
     slot = 0,
     velocity = 0
 }: DataTabularFormRowProps) => {
-
-
-  const [indexInput, setIndexInput] = useState<number>(index);
+    const [indexInput, setIndexInput] = useState<number>(index);
     const [cityInput, setCityInput] = useState<string>(city);
     const [slotInput, setSlotInput] = useState<number>(slot);
-    const [velocityInput, setVelocityInput] = useState<number | string>(velocity);
+    const [velocityInput, setVelocityInput] = useState<number | string>(
+        velocity === 0 ? '0.00' : velocity
+    );
 
     return (
         <>
@@ -52,9 +52,7 @@ export const DataTabularFormRow: React.FunctionComponent<DataTabularFormRowProps
                     type="number"
                     step="0.01"
                     value={velocityInput}
-                    onChange={(event) =>
-                        setVelocityInput(parseFloat(event.target.value).toFixed(2))
-                    }
+                    onChange={(event) => setVelocityInput(event.target.value)}
                 />
             </td>
         </>
