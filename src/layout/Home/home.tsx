@@ -19,7 +19,7 @@ export const Home: React.FunctionComponent = () => {
     const [data, setData] = useState<DataRecord[]>([]);
     const columnHeaders = ['#', 'Index', 'City', 'Slot', 'Velocity'];
 
-    function submitForm(fromRange: number, toRange: number) {
+    const submitForm = (fromRange: number, toRange: number): void => {
         if (!loadingFlg) {
             setLoadingFlg(true);
             getData(fromRange, toRange, getTokenFromLocalStorage())
@@ -29,13 +29,11 @@ export const Home: React.FunctionComponent = () => {
                             response.status,
                             'Network Error'
                         );
-                    setLoadingFlg(false);
-                    setErrorFLg(false);
                     return response.json();
                 })
                 .then((dataResponseDto: DataResponseDto) => {
                     setData(
-                        normaliseData(
+                        normalizeData(
                             fromRange,
                             toRange,
                             dataResponseDto.data.map(
@@ -46,6 +44,8 @@ export const Home: React.FunctionComponent = () => {
                     );
                     if (dataResponseDto.token)
                         localStorage.setItem('token', dataResponseDto.token);
+                  setLoadingFlg(false);
+                  setErrorFLg(false);
                 })
                 .catch((err) => {
                     setLoadingFlg(false);
@@ -55,18 +55,18 @@ export const Home: React.FunctionComponent = () => {
                     }
                 });
         }
-    }
+    };
 
-    function normaliseData(
+    const normalizeData = (
         fromRange: number,
         toRange: number,
         data: DataRecord[]
-    ): DataRecord[] {
+    ): DataRecord[] => {
         const normalizedData: DataRecord[] = [];
         for (let i = fromRange; i <= toRange; i++) {
-          const record = data.find((record) => record.index === i);
+            const record = data.find((record) => record.index === i);
             if (record) {
-                normalizedData[i]= record;
+                normalizedData[i] = record;
             } else {
                 normalizedData[i] = {
                     index: i,
@@ -76,13 +76,12 @@ export const Home: React.FunctionComponent = () => {
                 };
             }
         }
-      console.log('EEE', normalizedData);
         return normalizedData;
-    }
+    };
 
-    function getTokenFromLocalStorage(): string | null {
+    const getTokenFromLocalStorage = (): string | null => {
         return localStorage.getItem('token');
-    }
+    };
 
     const errorMessage = errorFlg ? (
         <ErrorMessage userFriendlyMessage="Ups!Something went wrong. Please try again!" />
